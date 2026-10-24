@@ -288,4 +288,5 @@
     <string name="eu_quality_5">極めて悪い</string>
     <string name="calculated_at">計算時刻 %1$s</string>
     <string name="partial_image">一部の画像を取得できません。空白領域は欠測の可能性があります。</string>
+    <string name="city_cached_update">キャッシュ · %1$s</string>
 </resources>

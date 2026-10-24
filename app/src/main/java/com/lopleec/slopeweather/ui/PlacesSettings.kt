@@ -46,20 +46,20 @@ import kotlin.coroutines.resume
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class,ExperimentalMaterial3Api::class)
 @Composable fun PlacesScreen(vm: WeatherViewModel,places: List<Place>,selected: Place?,f: Boolean,onAdd: ()->Unit,onSelect: (Place)->Unit,onMessage: (String)->Unit,onSettings: ()->Unit,locating: Boolean=false,onLocate: ()->Unit) {
     val previews by vm.previews.collectAsState()
+    val refreshing by vm.refreshingPlaces.collectAsState()
+    val errors by vm.previewErrors.collectAsState()
     val current by vm.currentLocation.collectAsState()
-    val provider by vm.provider.collectAsState()
     val snackbar=remember {SnackbarHostState()};val scope=rememberCoroutineScope();val haptic=LocalHapticFeedback.current
     val removed=s(R.string.city_removed);val undo=s(R.string.undo)
     val swipeRevisions=remember {mutableStateMapOf<String,Int>()}
     fun remove(p: Place) {val index=places.indexOf(p);vm.remove(p);haptic.performHapticFeedback(HapticFeedbackType.LongPress);scope.launch {if(snackbar.showSnackbar(removed,undo)==SnackbarResult.ActionPerformed) {swipeRevisions[p.id]=(swipeRevisions[p.id] ?: 0)+1;vm.restorePlace(p,index)}}}
-    LaunchedEffect(places,current,provider) {vm.loadPreviews()}
-    DisposableEffect(vm) {onDispose {vm.cancelPreviews()}}
+    LaunchedEffect(vm) {vm.refreshStalePlaces()}
     Box(Modifier.widthIn(max=680.dp).fillMaxSize()) {
         Column(Modifier.fillMaxSize()) {
             TopAppBar(title={Text(s(R.string.app_name))},actions={FilledTonalIconButton(onClick=onSettings,shape=androidx.compose.foundation.shape.CircleShape) {Icon(Icons.Outlined.Settings,s(R.string.settings))}},windowInsets=WindowInsets(0,0,0,0),colors=TopAppBarDefaults.topAppBarColors(containerColor=androidx.compose.ui.graphics.Color.Transparent))
             LazyColumn(Modifier.weight(1f),contentPadding=PaddingValues(start=16.dp,end=16.dp,bottom=116.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
                 item("current-heading") {PlaceSection(s(R.string.current_location_title),Icons.Outlined.MyLocation)}
-                current?.let {p->item("current-card") {PlaceCard(p,previews[p.id],f,{onSelect(p)})}}
+                current?.let {p->item("current-card") {PlaceCard(p,previews[p.id],f,{onSelect(p)},refreshing=p.id in refreshing,error=errors[p.id])}}
                 item("locate") {
                     Box(Modifier.fillMaxWidth(),contentAlignment=Alignment.Center) {
                         TextButton(onClick={onLocate()},enabled=!locating) {
@@ -77,7 +77,7 @@ import kotlin.coroutines.resume
                         val dismiss=rememberSwipeToDismissBoxState()
                         LaunchedEffect(dismiss.settledValue) {if(dismiss.settledValue==SwipeToDismissBoxValue.EndToStart) remove(p)}
                         SwipeToDismissBox(state=dismiss,enableDismissFromStartToEnd=false,backgroundContent={Surface(Modifier.fillMaxSize(),shape=RoundedCornerShape(50),color=MaterialTheme.colorScheme.errorContainer) {Box(Modifier.fillMaxSize().padding(end=28.dp),contentAlignment=Alignment.CenterEnd) {Icon(Icons.Outlined.Delete,s(R.string.remove_city),tint=MaterialTheme.colorScheme.onErrorContainer)}}}) {
-                            PlaceCard(p,previews[p.id],f,{onSelect(p)},{haptic.performHapticFeedback(HapticFeedbackType.LongPress);menu=true})
+                            PlaceCard(p,previews[p.id],f,{onSelect(p)},{haptic.performHapticFeedback(HapticFeedbackType.LongPress);menu=true},p.id in refreshing,errors[p.id])
                         }
                         }
                         DropdownMenu(menu,{menu=false}) {
@@ -103,7 +103,7 @@ import kotlin.coroutines.resume
     Row(Modifier.padding(top=20.dp,bottom=16.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(10.dp)) {Icon(icon,null,Modifier.size(22.dp),tint=MaterialTheme.colorScheme.onSurfaceVariant);Text(title,style=MaterialTheme.typography.titleMedium)}
 }
 @OptIn(androidx.compose.foundation.ExperimentalFoundationApi::class)
-@Composable private fun PlaceCard(p: Place,w: WeatherBundle?,f: Boolean,onClick: ()->Unit,onLongClick: (() -> Unit)?=null) {
+@Composable private fun PlaceCard(p: Place,w: WeatherBundle?,f: Boolean,onClick: ()->Unit,onLongClick: (() -> Unit)?=null,refreshing: Boolean=false,error: String?=null) {
     val shape=RoundedCornerShape(50)
     val locale=androidx.compose.ui.platform.LocalConfiguration.current.locales[0]
     val administrativeParts=p.name.substringBefore(" / ").split(" · ")
@@ -115,6 +115,18 @@ import kotlin.coroutines.resume
                 if(administrativeParts.size>1) Text(administrativeParts.drop(1).joinToString(" · "),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=2,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                 if(w!=null) {Text(condition(w.current.code),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant);w.daily.firstOrNull()?.let {Text("${temperature(it.high,f)} ${temperature(it.low,f)}",style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant)}}
                 else Text("%.3f, %.3f".format(locale,p.latitude,p.longitude),style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
+                if(refreshing || w!=null || error!=null) Row(verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(6.dp)) {
+                    if(refreshing) CircularProgressIndicator(Modifier.size(12.dp),strokeWidth=1.5.dp)
+                    val status=when {
+                        refreshing->s(R.string.loading)
+                        error!=null && w!=null->s(R.string.city_cached_update,localTime(w.current.time,w.zone,"MM-dd HH:mm"))
+                        error=="OFFLINE"->s(R.string.offline)
+                        error!=null->s(R.string.error_title)
+                        w!=null->s(R.string.updated,localTime(w.current.time,w.zone))
+                        else->""
+                    }
+                    Text(status,style=MaterialTheme.typography.bodySmall,color=MaterialTheme.colorScheme.onSurfaceVariant,maxLines=1,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis)
+                }
             }
             Text(temperature(w?.current?.get("temperature_2m"),f),fontSize=32.sp)
         }

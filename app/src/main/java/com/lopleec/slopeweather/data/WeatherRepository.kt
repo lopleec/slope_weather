@@ -4,6 +4,8 @@ import android.content.Context
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import org.json.JSONObject
 import java.io.File
 import java.net.URLEncoder
@@ -64,6 +66,7 @@ class WeatherRepository(private val context: Context) {
         val result=enriched.copy(air=air?.first,airHourly=air?.second.orEmpty(),daily=enriched.daily.map {d->
             if(d.sunrise!=null && d.sunset!=null) d else runCatching {val a=astronomy(p.copy(zone=enriched.zone),d.time);d.copy(sunrise=d.sunrise ?: a.sunRise,sunset=d.sunset ?: a.sunSet)}.getOrDefault(d)
         },alerts=(weather.alerts+w?.alerts.orEmpty()).filter {it.expires==null || it.expires>java.time.Instant.now().epochSecond}.distinctBy {it.id},alertsChecked=weather.alertsChecked || w!=null,alertStatus=w?.status ?: if(weather.alertsChecked) "regional" else "unavailable",alertsCheckedAt=w?.checked)
+        currentCoroutineContext().ensureActive()
         writeCacheAtomically(file(p,provider),result.json().toString())
         result
     }}

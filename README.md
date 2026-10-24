@@ -11,13 +11,14 @@ Package: `com.lopleec.slopeweather` · License: [Apache-2.0](LICENSE) · [GitHub
 ### Features
 
 - Current location and saved places, administrative-area search, coordinate input, multilingual place names, swipe-to-delete with undo, and cached weather when offline. Manual places work without location permission.
+- Automatically refresh weather whenever the app opens or returns to the foreground. The visible city and current location take priority; remaining saved places update asynchronously across pages. City cards show refresh progress, observation times and cached-data status.
 - Current conditions, hourly and daily forecasts, short-term precipitation where available, wind, humidity, pressure, visibility, UV, air pollution and pollen. Missing source values remain missing. Celsius/Fahrenheit and km/h, m/s or mph are selectable.
 - Independent US, European and Chinese AQI standards. An unavailable standard is identified rather than converted from another index.
 - Solar-position-based daytime, nighttime and twilight skies, soft drifting clouds, rain/snow and thunderstorm effects. Card appearance follows the selected app/system theme. Cards can be reordered and hidden; detailed forecast views open from each card.
 - Historical RainViewer radar, JMA Japan radar, and NASA GPM IMERG satellite precipitation estimates. Maps use only timestamps published by the source. Satellite estimates can be delayed and are distinct from live radar.
 - Regional official alerts and WMO SWIC CAP warnings, with optional background notification checks approximately every three hours. Coverage and Android background scheduling limits apply.
 - Local sunrise, sunset, twilight, moon phase and moonrise/set calculations. English, Simplified Chinese, Traditional Chinese and Japanese interfaces.
-- [Not yet implemented] Fetch weather data in the background and display it in home-screen widgets.
+- [Not yet implemented] Scheduled weather refresh while the app is closed, and home-screen widgets.
 
 ### Data sources and limitations
 
@@ -87,13 +88,14 @@ Copyright 2026 Lopleec. Application source is licensed under [Apache-2.0](LICENS
 ### 功能
 
 - 当前位置与收藏城市、行政区搜索、经纬度输入、多语言地名、左滑删除与撤销，以及断网时的天气缓存。手动添加城市无需定位权限。
+- 每次打开应用或回到前台时自动刷新天气，优先当前正在查看的城市与当前位置，其余收藏城市跨页面异步更新；城市卡片显示刷新进度、观测时间和缓存状态。
 - 当前天气、逐小时和逐日预报、源支持时的短时降水，以及风、湿度、气压、能见度、UV、空气污染物与花粉。缺失值保留为缺失；支持摄氏度／华氏度，以及 km/h、m/s、mph。
 - 美国、欧洲和中国 AQI 标准独立选择；所选标准不可用时明确提示，不用另一种指数换算顶替。
 - 按城市当前太阳位置变化的昼夜与晨昏天空、柔和浮云、雨雪和雷暴效果。卡片配色跟随应用／系统主题；支持拖放排序、隐藏及独立详情页。
 - RainViewer 历史雷达、JMA 日本雷达与 NASA GPM IMERG 卫星降水估计。地图只使用服务公布的实际时间帧；卫星估计可能有延迟，与实时雷达不同。
 - 区域官方预警与 WMO SWIC CAP 预警，可选约每三小时执行的后台通知检查。实际覆盖和通知及时性受到源接入情况及 Android 后台限制影响。
 - 本地计算日出、日落、晨昏、月相及月出月落。界面支持英语、简体中文、繁体中文和日语。
-- [暂未实现] 后台刷新获取天气数据并使用桌面小组件显示。
+- [暂未实现] 应用关闭后的定时后台天气刷新，以及桌面小组件。
 
 ### 数据源与限制
 

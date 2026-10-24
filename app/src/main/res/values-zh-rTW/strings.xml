@@ -288,4 +288,5 @@
     <string name="eu_quality_5">極差</string>
     <string name="calculated_at">計算時間 %1$s</string>
     <string name="partial_image">部分影像圖磚暫時無法使用，空白區域可能是缺測。</string>
+    <string name="city_cached_update">快取 · %1$s</string>
 </resources>

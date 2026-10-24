@@ -288,4 +288,5 @@
     <string name="eu_quality_5">Extremely poor</string>
     <string name="calculated_at">Calculated at %1$s</string>
     <string name="partial_image">Some image tiles are unavailable. Blank areas may be missing data.</string>
+    <string name="city_cached_update">Cached · %1$s</string>
 </resources>

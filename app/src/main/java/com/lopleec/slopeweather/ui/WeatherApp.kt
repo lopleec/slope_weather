@@ -33,6 +33,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.lopleec.slopeweather.R
 import com.lopleec.slopeweather.WeatherViewModel
 import com.lopleec.slopeweather.data.*
@@ -59,9 +62,10 @@ import kotlin.math.roundToInt
             val location=locateDevice(context,vm.prefs.getString("locationMode","balanced")=="gps")
             if(location==null) locationMessage=locationFailed else {
                 val previous=vm.currentLocation.value
-                val nearby=previous?.takeIf {distance(it.latitude,it.longitude,location.latitude,location.longitude)<.25}
-                vm.setCurrentLocation(Place(nearby?.name ?: pendingLocation,location.latitude,location.longitude,nearby?.country.orEmpty(),java.time.ZoneId.systemDefault().id),open)
-                vm.setCurrentLocation(resolveLocationPlace(context,location,vm.repository,previous),open=false)
+                // Keep an existing location stable until naming resolves, avoiding two
+                // different forecast requests for a temporary GPS point and its station.
+                if(previous==null) vm.setCurrentLocation(Place(pendingLocation,location.latitude,location.longitude,"",java.time.ZoneId.systemDefault().id),open)
+                vm.setCurrentLocation(resolveLocationPlace(context,location,vm.repository,previous),open=open && previous!=null)
             }
         } catch(e: kotlinx.coroutines.CancellationException) {throw e}
         catch(_: Exception) {openLocationWhenReady=false;locationMessage=locationFailed}
@@ -77,9 +81,15 @@ import kotlin.math.roundToInt
     LaunchedEffect(place?.id) {weatherScroll.scrollTo(0)}
     var tab by rememberSaveable {mutableIntStateOf(if(currentLocation!=null) 0 else 2)}
     var startupLocation by remember {mutableStateOf(currentLocation==null)}
-    LaunchedEffect(Unit) {
+    val refreshDeviceLocation by rememberUpdatedState<()->Unit>({
         if(ContextCompat.checkSelfPermission(context,Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED) locate(false)
         else if(!vm.prefs.getBoolean("locationPermissionRequested",false)) requestLocation()
+    })
+    val lifecycle=LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        val observer=LifecycleEventObserver {_,event->if(event==Lifecycle.Event.ON_START) refreshDeviceLocation()}
+        lifecycle.addObserver(observer)
+        onDispose {lifecycle.removeObserver(observer)}
     }
     LaunchedEffect(currentLocation,locating) {if(currentLocation!=null && (startupLocation || (openLocationWhenReady && !locating))) {startupLocation=false;openLocationWhenReady=false;tab=0}}
     LaunchedEffect(place,tab) {if(place==null && tab in 0..1) tab=2}

@@ -1,25 +1,21 @@
-# Slope Weather 0.1.18
+# Slope Weather 0.1.19
 
 ## English
 
 ### Changes
 
-- Replace the launcher icon with a black circular weather mark on a white background.
-- Provide an adaptive launcher icon with padding for circular and other Android launcher masks.
-- Mark background weather refresh and home-screen widgets as not yet implemented in the English and Chinese README.
-
-### Distribution
-
-The APK uses the same production signing identity as version 0.1.17. The source archive excludes private signing material, local SDK configuration, build caches and diagnostic captures. SHA256SUMS contains the release-asset hashes; BUILD-INFO.json records package, version and public signing-certificate metadata.
+- Refresh weather whenever the app opens or returns to the foreground, with the selected city and current location first.
+- Fetch remaining saved places independently of the visible page, with at most two concurrent location requests and shared requests for duplicate coordinates.
+- Show cached data immediately, then replace it with current results. City cards display loading progress, observation times and cached-data status after a failed refresh.
+- Reprioritize queued work when the selected city changes; protect against late responses after a data-source change or city removal.
+- Update device location when the app becomes visible with location permission. Scheduled refresh while the app is closed and home-screen widgets remain unimplemented.
 
 ## 简体中文
 
 ### 更新
 
-- 将应用启动图标更换为白底黑色圆形天气标志。
-- 提供自适应启动图标，并为圆形等 Android 启动器遮罩预留间距。
-- 在中英文 README 中明确标注后台天气刷新及桌面小组件暂未实现。
-
-### 分发
-
-APK 沿用 0.1.17 的正式发布签名。源码包不包含私有签名材料、本机 SDK 配置、构建缓存和诊断截图。SHA256SUMS 提供发布文件校验值，BUILD-INFO.json 记录包名、版本及公开签名证书信息。
+- 每次打开应用或回到前台时自动刷新天气，优先当前所选城市与当前位置。
+- 其余收藏城市独立于当前页面继续获取；最多同时请求两个地点，同坐标共用请求。
+- 先显示缓存，再用新结果更新；城市卡片显示加载进度、观测时间，并在刷新失败时标注缓存状态。
+- 切换城市时调整待处理请求的优先级；切换数据源或删除城市后，防止旧响应覆盖当前状态。
+- 获得定位授权时，应用回到可见状态会更新设备位置。应用关闭后的定时刷新及桌面小组件仍暂未实现。

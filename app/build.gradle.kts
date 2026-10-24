@@ -27,8 +27,8 @@ android {
         applicationId = "com.lopleec.slopeweather"
         minSdk = 26
         targetSdk = 36
-        versionCode = 19
-        versionName = "0.1.18"
+        versionCode = 20
+        versionName = "0.1.19"
         testInstrumentationRunner = "com.lopleec.slopeweather.ui.WeatherRenderChecks"
     }
     bundle { language { enableSplit = false } }

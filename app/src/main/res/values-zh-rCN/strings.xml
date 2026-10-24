@@ -288,4 +288,5 @@
     <string name="eu_quality_5">极差</string>
     <string name="calculated_at">计算时间 %1$s</string>
     <string name="partial_image">部分图像瓦片暂不可用，空白区域可能是缺测。</string>
+    <string name="city_cached_update">缓存 · %1$s</string>
 </resources>

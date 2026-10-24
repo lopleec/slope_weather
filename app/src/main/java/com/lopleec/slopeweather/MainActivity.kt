@@ -7,9 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.lopleec.slopeweather.ui.WeatherApp
+import androidx.lifecycle.ViewModelProvider
 import java.util.Locale
 
 class MainActivity: ComponentActivity() {
+    private val weatherModel by lazy {ViewModelProvider(this)[WeatherViewModel::class.java]}
     override fun attachBaseContext(base: Context) {
         val tag=base.getSharedPreferences("weather",MODE_PRIVATE).getString("language","").orEmpty()
         val configuration=Configuration(base.resources.configuration)
@@ -19,6 +21,11 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge(statusBarStyle=androidx.activity.SystemBarStyle.auto(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT),navigationBarStyle=androidx.activity.SystemBarStyle.auto(android.graphics.Color.TRANSPARENT,android.graphics.Color.TRANSPARENT))
-        setContent { WeatherApp() }
+        setContent { WeatherApp(weatherModel) }
+    }
+    override fun onStart() {super.onStart();weatherModel.onForeground()}
+    override fun onStop() {
+        if(!isChangingConfigurations) weatherModel.onBackground()
+        super.onStop()
     }
 }
