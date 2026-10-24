@@ -17,6 +17,7 @@ Package: `com.lopleec.slopeweather` · License: [Apache-2.0](LICENSE) · [GitHub
 - Historical RainViewer radar, JMA Japan radar, and NASA GPM IMERG satellite precipitation estimates. Maps use only timestamps published by the source. Satellite estimates can be delayed and are distinct from live radar.
 - Regional official alerts and WMO SWIC CAP warnings, with optional background notification checks approximately every three hours. Coverage and Android background scheduling limits apply.
 - Local sunrise, sunset, twilight, moon phase and moonrise/set calculations. English, Simplified Chinese, Traditional Chinese and Japanese interfaces.
+- [Not yet implemented] Fetch weather data in the background and display it in home-screen widgets.
 
 ### Data sources and limitations
 
@@ -92,6 +93,7 @@ Copyright 2026 Lopleec. Application source is licensed under [Apache-2.0](LICENS
 - RainViewer 历史雷达、JMA 日本雷达与 NASA GPM IMERG 卫星降水估计。地图只使用服务公布的实际时间帧；卫星估计可能有延迟，与实时雷达不同。
 - 区域官方预警与 WMO SWIC CAP 预警，可选约每三小时执行的后台通知检查。实际覆盖和通知及时性受到源接入情况及 Android 后台限制影响。
 - 本地计算日出、日落、晨昏、月相及月出月落。界面支持英语、简体中文、繁体中文和日语。
+- [暂未实现] 后台刷新获取天气数据并使用桌面小组件显示。
 
 ### 数据源与限制
 
