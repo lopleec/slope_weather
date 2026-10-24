@@ -1,0 +1,9 @@
+Slope Weather
+Copyright 2026 Lopleec
+Licensed under the Apache License, Version 2.0
+
+Repository: https://github.com/lopleec/slope_weather
+
+Third-party components retain their respective copyright notices and licenses.
+Component attribution and license texts are included in app/src/main/assets/licenses/
+and listed in docs/THIRD_PARTY_NOTICES.md.

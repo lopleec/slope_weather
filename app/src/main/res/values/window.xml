@@ -1,0 +1,4 @@
+<resources>
+    <color name="window_background">#F8F8F8</color>
+    <bool name="window_light_system_bars">true</bool>
+</resources>

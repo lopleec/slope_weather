@@ -1,0 +1,4 @@
+<resources>
+    <color name="window_background">#0F0F0F</color>
+    <bool name="window_light_system_bars">false</bool>
+</resources>

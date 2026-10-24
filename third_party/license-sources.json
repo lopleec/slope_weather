@@ -1,0 +1,56 @@
+[
+  {
+    "file": "AndroidX-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/androidx/androidx/androidx-main/LICENSE.txt",
+    "bytes": 10175,
+    "ok": true
+  },
+  {
+    "file": "Kotlin-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/JetBrains/kotlin/v2.2.20/license/LICENSE.txt",
+    "bytes": 11358,
+    "ok": true
+  },
+  {
+    "file": "Kotlin-NOTICE.txt",
+    "url": "https://raw.githubusercontent.com/JetBrains/kotlin/v2.2.20/license/NOTICE.txt",
+    "bytes": 482,
+    "ok": true
+  },
+  {
+    "file": "kotlinx-coroutines-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/Kotlin/kotlinx.coroutines/1.11.0/LICENSE.txt",
+    "bytes": 11398,
+    "ok": true
+  },
+  {
+    "file": "kotlinx-serialization-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/Kotlin/kotlinx.serialization/v1.7.3/LICENSE.txt",
+    "bytes": 11356,
+    "ok": true
+  },
+  {
+    "file": "JetBrains-annotations-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/JetBrains/java-annotations/23.0.0/LICENSE.txt",
+    "bytes": 11352,
+    "ok": true
+  },
+  {
+    "file": "JSpecify-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/jspecify/jspecify/v1.0.0/LICENSE",
+    "bytes": 11358,
+    "ok": true
+  },
+  {
+    "file": "Guava-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/google/guava/master/LICENSE",
+    "bytes": 11358,
+    "ok": true
+  },
+  {
+    "file": "commons-suncalc-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/shred/commons-suncalc/v3.11/LICENSE-APL.txt",
+    "bytes": 11358,
+    "ok": true
+  }
+]

@@ -1,0 +1,4 @@
+Guava listenablefuture (Google): Apache-2.0, https://github.com/google/guava
+JSpecify annotations: Apache-2.0, https://github.com/jspecify/jspecify
+JetBrains annotations: Apache-2.0, https://github.com/JetBrains/java-annotations
+commons-suncalc copyright Richard Körber; https://github.com/shred/commons-suncalc

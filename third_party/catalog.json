@@ -1,0 +1,92 @@
+[
+  {
+    "name": "AndroidX",
+    "prefixes": [
+      "androidx."
+    ],
+    "projectUrl": "https://android.googlesource.com/platform/frameworks/support/",
+    "license": "Apache-2.0",
+    "copyright": "The Android Open Source Project and contributors; individual source files retain their original years and notices.",
+    "licenseFile": "AndroidX-Apache-2.0.txt"
+  },
+  {
+    "name": "Kotlin standard library",
+    "prefixes": [
+      "org.jetbrains.kotlin:"
+    ],
+    "projectUrl": "https://github.com/JetBrains/kotlin",
+    "license": "Apache-2.0",
+    "copyright": "JetBrains s.r.o. and Kotlin contributors; individual source-file notices apply.",
+    "licenseFile": "Kotlin-Apache-2.0.txt"
+  },
+  {
+    "name": "kotlinx.coroutines",
+    "prefixes": [
+      "org.jetbrains.kotlinx:kotlinx-coroutines"
+    ],
+    "projectUrl": "https://github.com/Kotlin/kotlinx.coroutines",
+    "license": "Apache-2.0",
+    "copyright": "Copyright 2000-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.",
+    "licenseFile": "kotlinx-coroutines-Apache-2.0.txt"
+  },
+  {
+    "name": "kotlinx.serialization",
+    "prefixes": [
+      "org.jetbrains.kotlinx:kotlinx-serialization"
+    ],
+    "projectUrl": "https://github.com/Kotlin/kotlinx.serialization",
+    "license": "Apache-2.0",
+    "copyright": "JetBrains s.r.o. and contributors; individual source-file notices apply.",
+    "licenseFile": "kotlinx-serialization-Apache-2.0.txt"
+  },
+  {
+    "name": "JetBrains Java annotations",
+    "prefixes": [
+      "org.jetbrains:annotations:"
+    ],
+    "projectUrl": "https://github.com/JetBrains/java-annotations",
+    "license": "Apache-2.0",
+    "copyright": "Copyright 2000-2016 JetBrains s.r.o.",
+    "licenseFile": "JetBrains-annotations-Apache-2.0.txt"
+  },
+  {
+    "name": "Guava · listenablefuture",
+    "prefixes": [
+      "com.google.guava:listenablefuture:"
+    ],
+    "projectUrl": "https://github.com/google/guava",
+    "license": "Apache-2.0",
+    "copyright": "Copyright (C) 2007 The Guava Authors. Individual source files retain their notices.",
+    "licenseFile": "Guava-Apache-2.0.txt"
+  },
+  {
+    "name": "JSpecify",
+    "prefixes": [
+      "org.jspecify:"
+    ],
+    "projectUrl": "https://github.com/jspecify/jspecify",
+    "license": "Apache-2.0",
+    "copyright": "Copyright 2018-2020 The JSpecify Authors. Individual source files retain their notices.",
+    "licenseFile": "JSpecify-Apache-2.0.txt"
+  },
+  {
+    "name": "commons-suncalc",
+    "prefixes": [
+      "org.shredzone.commons:commons-suncalc:"
+    ],
+    "projectUrl": "https://github.com/shred/commons-suncalc",
+    "license": "Apache-2.0",
+    "copyright": "Copyright (C) 2018 Richard \"Shred\" Körber. Individual source files retain their notices.",
+    "licenseFile": "commons-suncalc-Apache-2.0.txt"
+  },
+  {
+    "name": "jsoup",
+    "prefixes": [
+      "org.jsoup:jsoup:"
+    ],
+    "projectUrl": "https://github.com/jhy/jsoup",
+    "license": "MIT",
+    "copyright": "Copyright (c) 2009-2026 Jonathan Hedley <https://jsoup.org/>",
+    "licenseFile": "jsoup-1.23.1-LICENSE.txt"
+  }
+]

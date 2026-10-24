@@ -1,0 +1,39 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+allprojects { target ->
+    if (target.path == ':app') {
+        target.afterEvaluate {
+            if (!target.tasks.names.contains('writeRuntimeInventory')) {
+                def writer=target.tasks.register('writeRuntimeInventory') {
+                    doLast {
+                        def items=target.configurations.getByName('releaseRuntimeClasspath').resolvedConfiguration.resolvedArtifacts.collect { a ->
+                            def m=a.moduleVersion.id
+                            "${m.group}:${m.name}:${m.version}".toString()
+                        }.unique().sort()
+                        def catalog=new JsonSlurper().parse(target.rootProject.file('third_party/catalog.json'))
+                        def unknown=items.findAll { id -> !catalog.any { c -> c.prefixes.any { id.startsWith(it) } } }
+                        if (!unknown.empty) throw new GradleException("Missing project/license attribution for: ${unknown}")
+                        def components=catalog.collect { c ->
+                            def included=items.findAll { id -> c.prefixes.any { id.startsWith(it) } }
+                            def result=new LinkedHashMap(c)
+                            result.remove('prefixes');result.artifacts=included
+                            result
+                        }.findAll { !it.artifacts.empty }
+                        components.add([name:'Leaflet',projectUrl:'https://github.com/Leaflet/Leaflet',license:'BSD-2-Clause',copyright:'Copyright (c) 2010-2023, Volodymyr Agafonkin\nCopyright (c) 2010-2011, CloudMade\nAll rights reserved.',licenseFile:'Leaflet-BSD-2-Clause.txt',artifacts:['Leaflet 1.9.4 · bundled JavaScript and CSS']])
+                        def assets=target.file('src/main/assets')
+                        components.each { c ->
+                            if (!new File(assets,"licenses/${c.licenseFile}").isFile()) throw new GradleException("Missing license text for ${c.name}")
+                        }
+                        new File(assets,'third-party-components.json').text=JsonOutput.prettyPrint(JsonOutput.toJson(components))+'\n'
+                        new File(assets,'licenses/Runtime-dependencies.txt').text='Slope Weather — release runtime components\n\n'+items.join('\n')+'\n\nLeaflet 1.9.4 is bundled separately. Project-specific attribution, source URLs, versions and full license texts are available in Open-source licenses. Test and build-only dependencies are excluded.\n'
+                        def table='# Third-party software components\n\nResolved from the release runtime classpath. Data-service terms are documented separately in THIRD_PARTY_NOTICES.md.\n\n'
+                        components.each { c -> table+="## ${c.name}\n\n${c.copyright}\n\nProject: ${c.projectUrl}\n\nLicense: ${c.license} — [full text](../app/src/main/assets/licenses/${c.licenseFile})\n\n"+c.artifacts.collect { "- `${it}`" }.join('\n')+'\n\n' }
+                        target.rootProject.file('docs/OPEN_SOURCE_LICENSES.md').text=table
+                    }
+                }
+                target.tasks.named('preBuild').configure { dependsOn(writer) }
+            }
+        }
+    }
+}

@@ -1,0 +1,76 @@
+坡度天气 · Slope Weather 0.1.10
+包名：com.lopleec.slopeweather
+原生 Android 天气应用，提供天气预报、天气地图、空气质量与天文计算。
+
+项目仓库：https://github.com/lopleec/slope_weather
+Copyright 2026 Lopleec
+Licensed under the Apache License, Version 2.0
+项目 LICENSE 原文随应用离线提供，可在“项目许可证”中查看；第三方组件适用各自的许可证。
+
+数据真实性、缓存与离线
+只显示来源实际返回的值，缺测不会补成 0。断网时保留上次成功获取的天气，显示缓存获取时间和数据时次；没有缓存则显示无法获取。站点观测、模式预报、露点推算与天文计算是不同类型的数据。可选 Open-Meteo 补充仅填入缺失字段，并注明来源，不会把模式值冒充站点观测。保留数据源的原生预报间隔，不伪造每小时或未来雷达数据。天气动效只是示意，不是测量结果。
+
+天气预报与观测来源
+Open-Meteo：https://open-meteo.com/ 与 https://open-meteo.com/en/docs
+也为 MET 直连源提供坐标对应的时区元数据。包括 Best match，以及可选择的 CMA GRAPES、JMA GSM/MSM、DWD ICON、ECMWF IFS、NOAA GFS、Météo-France ARPEGE/AROME、UK Met Office、KNMI HARMONIE 等模式。覆盖范围、预报天数、字段与更新时次由各上游决定。免费接口限非商业用途并有调用限制。数据通常按 CC BY 4.0 署名，UKMO 等部分产品另适用 CC BY-SA 4.0 或文档列明的许可，须保留上游署名与条件。
+
+中国中央气象台 NMC：https://www.nmc.cn/
+用于大陆站点观测、逐日预报、公开网页原生三小时预报、站点 AQI 和官方预警。属于未提供稳定性承诺的公开网站接口，可能变更。就近站点数据不等于目标坐标的精确观测。公开访问不代表允许无限制再分发，发布产品前需遵守网站条款。
+
+日本气象厅 JMA：https://www.jma.go.jp/ 与 https://www.jma.go.jp/jma/en/copyright.html
+AMeDAS 观测、区域／周预报、官方警报和日本降水雷达。站点与周预报区域表来自官网。遵循日本政府标准使用条款、JMA 署名要求及第三方内容例外。区域预报、就近站点观测与实际地点可能存在差异。
+
+Bright Sky / 德国 DWD：https://brightsky.dev/ 与 https://opendata.dwd.de/
+德国站点预报和官方预警，遵循 DWD 来源条款与署名要求。
+挪威气象局 MET Norway：https://api.met.no/ 与 https://api.met.no/doc/TermsOfService
+Locationforecast 全球预报，CC BY 4.0，需缓存、署名并提供可识别的联系标识。只发送用户自己填写的邮箱或网站，不冒用他人身份。
+香港天文台 HKO：https://www.hko.gov.hk/en/abouthko/opendata_intro.htm
+香港实况、九天天气预报和官方警告，遵循 HKO 开放数据的使用和署名条件。
+美国 NOAA / NWS：https://www.weather.gov/documentation/services-web-api
+美国小时／网格预报及有效预警，遵循 NOAA/NWS 再利用指南及可能存在的第三方声明。
+
+空气质量与花粉
+CAMS / Open-Meteo：https://open-meteo.com/en/docs/air-quality-api 与 https://atmosphere.copernicus.eu/
+包含经 Open-Meteo 分发和处理的哥白尼大气监测服务信息。污染物单位为 μg/m³，花粉为粒／m³。这些是网格模式估计，不是目标位置的传感器读数；花粉仅在支持的区域和季节提供。
+美国 AQI、欧洲 AQI 和中国 AQI 各自独立。欧洲指数采用自身的 0–20、20–40、40–60、60–80、80–100、超过 100 分段。中国 AQI 仅在来源实际提供 cn_aqi 时显示，目前为 NMC；不会把其他指数重新贴标签。不同标准的污染物阈值与平均时段不同，不能简单数值换算。选择的标准不可用时直接说明。界面取整不表示测量精度提高。
+
+全球官方气象预警
+世界气象组织 WMO SWIC：https://severeweather.wmo.int/ 与 https://severeweather.wmo.int/note.html
+SWIC 汇集超过 130 个国家气象水文部门的 CAP 预警，本应用按位置在全球查询，并在可用地区结合 NMC、JMA、HKO、NWS、DWD/Bright Sky 直连来源。WMO 是分发方，预警保留原发布机构、原文、有效期和官方链接，不编造机器译文。过滤测试、取消与过期 CAP 信息。
+没有收到匹配预警，不等于没有预警：国家是否加入 CAP、来源覆盖、接口故障与网络延迟都会影响结果。请以当地主管机构发布为准。打开通知后，约每三小时检查当前位置和收藏地区；送达受 Android 后台调度、节电和通知权限限制，不保证紧急送达。
+
+降水地图和时间线
+RainViewer：https://www.rainviewer.com/api/weather-maps-api.html
+公开接口仅提供过去两小时、十分钟间隔的雷达合成帧，原生瓦片最高缩放级别 7。界面显示的是合成帧生成时间，各雷达的实际观测时间可能不同。阴影遮罩表示无雷达覆盖；没有回波不等于没有降雨。不会编造更长历史或未来帧。遵守 RainViewer 署名、接口和服务条件。
+日本气象厅雷达：https://www.jma.go.jp/bosai/nowc/
+仅播放来源实际发布的时次，覆盖限日本周边。
+NASA GIBS / GPM IMERG：https://nasa-gibs.github.io/gibs-api-docs/ 与 https://gpm.nasa.gov/data/imerg
+全球卫星降水强度估计，不是实时雷达。按服务元数据实际公布的半小时时次，读取截至最新可用时刻的最多 24 小时历史；通常延迟数小时，也可能缺测。图例采用 NASA 原始配色和数值，未自行编造。遵循 NASA/EOSDIS 数据和图像使用政策及各数据集署名。MODIS Terra 真彩色底图另有显示日期，云层和缺测会遮挡地貌。实际帧之间的平滑过渡不产生新的观测。
+
+地图、搜索和地名语言
+© OpenStreetMap 贡献者，ODbL：https://www.openstreetmap.org/copyright
+Leaflet 用于内嵌地图。标准瓦片来自 https://tile.openstreetmap.org/ ，遵守 https://operations.osmfoundation.org/policies/tiles/ 的可见署名、应用 User-Agent、HTTP 缓存和禁止批量／离线抓取要求。只请求当前可见区域。底图失败时尝试 Esri World Street Map，地图保留 Esri、HERE、Garmin、USGS、OSM 等相应署名；各来源权利及 https://www.esri.com/en-us/legal/terms/full-master-agreement 适用。
+Photon / komoot：https://github.com/komoot/photon
+OSM 行政地名搜索与反向查询。公共演示服务没有可用性保证，可能限流；应用对搜索做延时与缓存。公共实例提供英、德、法及原生地名，其他应用语言还会使用 GeoNames/Open-Meteo 的真实译名和 Android 系统地理编码。覆盖可到区县级，但不是所有地区都有完整译名；找不到译名时保留真实名称，不自行音译。支持同名地区的多个候选。大规模分发应部署自己的服务。
+Open-Meteo 地理编码基于 GeoNames：https://www.geonames.org/ ，按 CC BY 4.0 署名。Android 地理编码由设备系统提供。可配置自有 reverseGeocoderUrl 指向另行部署的 Nominatim；公共 Nominatim 不用于即时搜索，其使用政策为 https://operations.osmfoundation.org/policies/nominatim/ ，要求运营方知情选择、缓存和严格限速。
+阿里云 DataV GeoAtlas：https://datav.aliyun.com/portal/school/atlas/area_selector
+用于大陆行政区边界，省级表内置，市区县边界缓存。天气请求保留 WGS84；仅边界判断及高德／百度跳转进行 GCJ-02／BD-09 转换。再分发需遵守 DataV 服务条款。
+Google Maps、高德、百度、OpenStreetMap、Windy 是外部地图入口，未内置它们的专有 SDK 或凭据；外部服务适用各自的条款与隐私政策。
+
+月相、月出月落和晨昏
+commons-suncalc 3.11：https://shredzone.org/maven/commons-suncalc/
+装饰天空根据所选地点坐标和当前时刻的太阳位置变化，区分当地昼夜、清晨傍晚及极昼极夜，不跟随手机界面主题或过时天气时间。卡片和详情页独立跟随应用／系统外观设置。云朵是简化视觉效果，不是卫星云图。
+
+依据地点坐标、当地日期和时区在本地计算月相、照亮比例、月出月落、日出日落及民用曙暮光。月亮图是照亮比例示意，不是实拍或天空中的实际倾角。云层、地形和折射会影响肉眼可见时间。露点仅在温度、湿度有效时以 Magnus 近似推算。天文计算离线可用，并明确标为计算值。
+美国海军天文台 USNO 仅用于独立测试核验，不是应用运行时依赖：https://aa.usno.navy.mil/data/api 。单日接口的月面照亮比例对应当地正午，不能与深夜的照亮比例直接比较。
+
+隐私与本地存储
+不含广告、账号或分析统计 SDK。使用相应功能时，坐标会发送给选定天气源、可选补充及空气质量服务、预警服务和地理编码服务；搜索词发送给搜索提供方；地图服务会收到瓦片坐标、IP 与应用 User-Agent。收藏地区、设置、天气响应和 HTTP 缓存保存在应用私有空间。定位与通知权限可在系统中管理，不请求后台定位权限。卸载应用会删除其私有数据。
+
+开源组件与许可证
+AndroidX Activity、Core、Compose UI/Foundation/Runtime/Material 3/Material Icons、Lifecycle、WorkManager 及 AndroidX 依赖：Apache-2.0，https://android.googlesource.com/platform/frameworks/support/
+Kotlin、kotlinx.coroutines 及必需的 Kotlin/JetBrains 依赖：Apache-2.0 及对应组件附带声明，https://github.com/JetBrains/kotlin 与 https://github.com/Kotlin/kotlinx.coroutines
+commons-suncalc 3.11：Apache-2.0。
+jsoup 1.23.1：MIT，https://jsoup.org/license
+Leaflet 1.9.4：BSD-2-Clause，版权所有 Vladimir Agafonkin、CloudMade，https://leafletjs.com/
+完整原始许可证与解析后的运行时依赖清单可在“开源许可证”中查看。构建工具与测试库不属于安装后的应用。项目源代码采用 Apache-2.0；第三方许可证适用于对应组件。商标与数据权利归各权利方所有。

@@ -1,0 +1,47 @@
+<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><style>/*LEAFLET_CSS*/
+html,body{height:100%;width:100%;margin:0;overflow:hidden}#map{position:absolute;inset:0;background:#c8d8dd;font-family:system-ui,sans-serif}.leaflet-control-attribution{font-size:9px;background:#ffffffe0!important;color:#203c43}.leaflet-tile-container{transition:opacity .22s linear}#message{position:absolute;z-index:1000;top:68px;left:14px;right:14px;border-radius:15px;padding:10px;background:#f5e2bb;color:#273f42;font:12px system-ui;display:none}#nasaLegend{position:absolute;z-index:800;bottom:85px;left:14px;max-width:240px;background:#ffffffed;border-radius:12px;display:none;padding:4px 8px;pointer-events:none}#nasaLegend svg{width:230px;height:105px;display:block}
+</style></head><body><div id="map"></div><div id="message" role="status"></div><div id="nasaLegend"><!--NASA_LEGEND--></div><script>/*LEAFLET_JS*/</script><script>
+const map=L.map('map',{zoomControl:false,fadeAnimation:true}).setView([0,0],3);map.attributionControl.setPrefix(false);
+let base,marker,coverage,config={},active=-1,requested=-1,epoch=0,baseErrors=0,baseFallback=false;
+const layers=new Map();
+function message(text){const box=document.getElementById('message');box.textContent=text||'';box.style.display=text?'block':'none'}
+function clearRadar(){epoch++;layers.forEach(v=>v.layer.remove());layers.clear();if(coverage)coverage.remove();coverage=null;active=requested=-1}
+function makeBase(style){
+ if(base)base.remove();baseErrors=0;baseFallback=false;
+ let url='https://tile.openstreetmap.org/{z}/{x}/{y}.png',credit='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>',max=19;
+ if(style==='satellite'){url='https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/MODIS_Terra_CorrectedReflectance_TrueColor/default/'+config.date+'/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg';credit='NASA GIBS · MODIS Terra · '+config.date;max=9}
+ base=L.tileLayer(url,{maxNativeZoom:max,maxZoom:18,attribution:credit,zIndex:0}).addTo(map);
+ if(style==='dark')base.getContainer().style.filter='invert(.95) hue-rotate(180deg) saturate(.55) brightness(.75)';
+ base.on('tileerror',()=>{if(++baseErrors>=4&&!baseFallback){baseFallback=true;base.remove();base=L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:18,maxZoom:18,zIndex:0,attribution:'Tiles &copy; Esri · Esri, HERE, Garmin, USGS, OpenStreetMap contributors'}).addTo(map);base.on('tileerror',()=>message(config.baseError));base.on('load',()=>message(''))}});
+}
+window.configure=function(c){
+ const moved=config.lat!==c.lat||config.lon!==c.lon,styleChanged=config.style!==c.style;
+ const changed=JSON.stringify(config.radar)!==JSON.stringify(c.radar);
+ config=c;message('');
+ if(moved){map.setView([c.lat,c.lon],6);if(marker)marker.remove();marker=L.circleMarker([c.lat,c.lon],{radius:7,color:'#fff',weight:2,fillColor:'#216ad9',fillOpacity:1}).addTo(map);marker.bindTooltip(document.createTextNode(c.name));}
+ if(styleChanged||!base)makeBase(c.style);
+ document.getElementById('nasaLegend').style.display=c.radar&&c.radar.satellite?'block':'none';
+ if(changed){clearRadar();if(c.radar&&c.radar.coverage)coverage=L.tileLayer(c.radar.coverage,{opacity:.25,maxNativeZoom:7,maxZoom:18,zIndex:4}).addTo(map);if(c.radar&&c.radar.frames.length)window.setFrame(c.radar.frames.length-1)}
+ setTimeout(()=>map.invalidateSize(),80);
+};
+function frameLayer(i){
+ if(layers.has(i))return layers.get(i);
+ const r=config.radar,version=epoch;
+ const layer=L.tileLayer(r.frames[i].url,{opacity:0,maxNativeZoom:r.maxZoom,maxZoom:18,attribution:r.attribution,zIndex:6,keepBuffer:1,updateWhenIdle:true});
+ const entry={layer,ready:false,failed:false,successes:0,errors:0};layers.set(i,entry);
+ layer.on('loading',()=>{entry.ready=false;entry.failed=false;entry.successes=0;entry.errors=0});
+ layer.on('tileload',()=>{entry.successes++});layer.on('tileerror',()=>{entry.failed=true;entry.errors++});
+ layer.on('load',()=>{if(version!==epoch)return;entry.ready=true;if(requested===i)showFrame(i,entry)});
+ layer.addTo(map);return entry;
+}
+function showFrame(i,entry){
+ if(entry.failed&&entry.successes===0){message(config.error);if(window.SlopeMap)SlopeMap.frameFailed();return}
+ message(entry.failed?config.partial:'');const previous=active;active=i;entry.layer.setOpacity(.7);
+ if(previous!==i&&layers.has(previous))layers.get(previous).layer.setOpacity(0);
+ if(window.SlopeMap)SlopeMap.frameShown(i);
+ const count=config.radar.frames.length,next=(i+1)%count;
+ frameLayer(next); // Preload the next real frame; never interpolate weather values.
+ for(const [key,value] of layers){if(key!==i&&key!==previous&&key!==next){value.layer.remove();layers.delete(key)}}
+}
+window.setFrame=function(i){const r=config.radar;if(!r||!r.frames||i<0||i>=r.frames.length)return;if(requested===i&&active===i)return;requested=i;const entry=frameLayer(i);if(entry.ready)showFrame(i,entry);else message(config.loading)};
+</script></body></html>
